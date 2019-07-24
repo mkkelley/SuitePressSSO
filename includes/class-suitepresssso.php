@@ -175,7 +175,9 @@ class Suitepresssso {
 		$plugin_public = new Suitepresssso_Public( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_filter('authenticate', $plugin_public, 'authenticate', 10, 3);
-	}
+        $this->loader->add_filter('login_redirect', $plugin_public, 'login_redirect', 10, 3 );
+
+    }
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.

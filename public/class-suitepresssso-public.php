@@ -54,6 +54,22 @@ class Suitepresssso_Public {
 
 	}
 
+    function login_redirect($redirect_to, $request, $user) {
+
+        //is there a user to check?
+        if ( isset( $user->roles ) && is_array( $user->roles ) ) {
+            //check for admins
+            if ( in_array( 'administrator', $user->roles ) ) {
+                // redirect them to the default place
+                return $redirect_to;
+            } else {
+                return home_url();
+            }
+        } else {
+            return $redirect_to;
+        }
+    }
+
 	// flush_rules() if our rules are not yet included
 	public function my_flush_rules(){
 		$rules = get_option( 'rewrite_rules' );
