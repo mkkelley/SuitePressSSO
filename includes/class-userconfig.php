@@ -17,7 +17,7 @@ class Userconfig{
                         'SigningcertificateId' => $suitepress_sso_options['signingcertificateid_3'],
                         'SigningcertificateXml' => $suitepress_sso_options['singingcertificatexml_4'],
                         'PortalUrl' => $suitepress_sso_options['portalurl_5'],
-                        'WPUsers' => $suitepress_sso_options['wpusers_6']
+                        'WPUsers' => null
                         );
 
         

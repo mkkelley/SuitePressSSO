@@ -54,11 +54,6 @@ class Suitepresssso_Public {
 
 	}
 
-	public function ms_login_rewrite_rules($rules)
-	{
-
-	}
-
 	// flush_rules() if our rules are not yet included
 	public function my_flush_rules(){
 		$rules = get_option( 'rewrite_rules' );
@@ -69,100 +64,6 @@ class Suitepresssso_Public {
 		}
 	}
 
-	public function ms_login_query_vars($vars) {
-		$vars[] = 'mssso';
-		$vars[] = 'returnUrl';
-	    return $vars;
-	}
-
-	public function ms_login($wp)
-	{
-		// only process requests with "my-plugin=ajax-handler"
-	    if (array_key_exists('mssso', $wp->query_vars) && $wp->query_vars['mssso'] == 'login') {
-
-	    	// Verrify credentials
-			$api = new MemberSuite();
-			$current_user = wp_get_current_user();
-
-			if(!$current_user->exists()) {
-				auth_redirect();
-				return;
-			}
-
-			$returnUrl = '/default.aspx';
-			if(array_key_exists('returnUrl', $wp->query_vars)) {
-				$returnUrl =  $wp->query_vars['returnUrl'];
-			}
-
-	 		$helper = new ConciergeApiHelper();
-	 		$api->accesskeyId = Userconfig::read('AccessKeyId');
-		    $api->associationId = Userconfig::read('AssociationId');
-		    $api->secretaccessId = Userconfig::read('SecretAccessKey');
-		    $api->portalusername = $current_user->user_email;
-		    $api->signingcertificateId = Userconfig::read('SigningcertificateId');
-			$rsaXML = html_entity_decode(Userconfig::read('SigningcertificateXml'));
-			$rsaXMLDecoded = htmlspecialchars_decode($rsaXML);
-
-			// Are we creating/maintaining portal users?
-			if(Userconfig::read('WPUsers') !== null) {
-				$msPortalUser = $api->SearchAndGetOrCreatePortalUser($current_user->user_email);
-				if(empty((array)$msPortalUser->aResultValue)) {
-					// Get a description of the MemberSuite Individual object
-					$individualObjectResponse = $api->DescribeObject($objectType = 'Individual');
-					// Create the MemberSuiteObject
-					$mso = $api->FromClassMetadata($individualObjectResponse->aResultValue);
-
-					// Create individual
-					$msIndividual = new msIndividual($mso);
-					$msIndividual->FirstName = $current_user->first_name;
-					$msIndividual->LastName = $current_user->last_name;
-					$msIndividual->EmailAddress = $current_user->user_email;
-					$saveIndividualResult = $api->save($msIndividual);
-				}
-			}
-
-
-		    // Use helper class to generate signature		    
-		    $api->digitalsignature = $helper->DigitalSignature($current_user->user_email, $rsaXMLDecoded);
-
-			
-	    	// Create Token for sso
-		    $response = $api->CreatePortalSecurityToken($current_user->user_email, $api->signingcertificateId, $api->digitalsignature);
-		    
-		    if($response->aSuccess=='false')
-		    {
-				wp_die($response->aErrors->bConciergeError->bMessage, 'Portal Login');
-				return $response->aErrors->bConciergeError->bMessage;
-		    }
-		    
-		    $securityToken = $response->aResultValue;
-
-		    ?>
-				<?php get_header(); ?>
-				<h1 style="text-align:center">Please wait while we log you into the portal.</h1>
-				<form name="LoginForm" method="post" id="LoginForm" action="<?php echo Userconfig::read('PortalUrl');?>/Login.aspx">
-				    <input type="hidden" name="Token" id="Token" value="<?php echo $securityToken;?>" />
-				        
-					<!--Once logged into Membersuite, jump to this URL-->
-					<input type="hidden" name="NextUrl" id="NextUrl" value="<?php echo $returnUrl ?>" />
-
-					<!--In the MemberSuite Portal header, provide a return link to a custom URL-->
-				    <input type="hidden" name="ReturnUrl" id="ReturnUrl" value="<?php echo get_site_url() ?>" />
-					<input type="hidden" name="ReturnText" id="ReturnText" />
-					
-					<!--On logout from the MemberSuite Portal, redirect to this URL rather than the default login page-->
-					<input type="hidden" name="LogoutUrl" id="LogoutUrl" value="<?php echo wp_logout_url(home_url()) ?>" />
-				</form>
-				<script>
-					document.LoginForm.submit();
-				</script>    
-				<?php get_footer(); ?>
-		    <?php
-
-			wp_die('Portal Login', 'Portal Login');
-			return 'Portal Login';
-	    }
-	}
 
 	public function kill_sidebar($sidebar_output) {
 		return '<h1>Sidebar</h1>';
@@ -239,22 +140,6 @@ class Suitepresssso_Public {
         //remove_action('authenticate', 'wp_authenticate_username_password', 20);
 
 		return $user;
-	}
-
-	function login_redirect($redirect_to, $request, $user) {
-
-		//is there a user to check?
-		if ( isset( $user->roles ) && is_array( $user->roles ) ) {
-			//check for admins
-			if ( in_array( 'administrator', $user->roles ) ) {
-				// redirect them to the default place
-				return $redirect_to;
-			} else {
-				return home_url();
-			}
-		} else {
-			return $redirect_to;
-		}
 	}
 
 	/**

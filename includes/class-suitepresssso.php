@@ -156,11 +156,7 @@ class Suitepresssso {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
-
 		$plugin_admin = new Suitepresssso_Admin( $this->get_plugin_name(), $this->get_version() );
-
-		//$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		//$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
 		$this->loader->add_action('admin_menu', $plugin_admin, 'admin_menu');
 		$this->loader->add_action('admin_init', $plugin_admin, 'suitepress_sso_page_init');
@@ -179,14 +175,6 @@ class Suitepresssso {
 		$plugin_public = new Suitepresssso_Public( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_filter('authenticate', $plugin_public, 'authenticate', 10, 3);
-		$this->loader->add_filter('parse_request', $plugin_public, 'ms_login');
-		$this->loader->add_filter('rewrite_rules_array', $plugin_public, 'ms_login_rewrite_rules', 30, 1);
-		$this->loader->add_filter('query_vars', $plugin_public, 'ms_login_query_vars');
-		$this->loader->add_filter('login_redirect', $plugin_public, 'login_redirect', 10, 3 );
-
-		//$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		//$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-
 	}
 
 	/**
