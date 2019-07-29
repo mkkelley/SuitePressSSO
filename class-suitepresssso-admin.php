@@ -149,35 +149,6 @@ class Suitepresssso_Admin {
 		);
 	}
 
-	public function suitepress_sso_sanitize( $input ) {
-		$sanitary_values = array();
-		if ( isset( $input['accesskeyid_0'] ) ) {
-			$sanitary_values['accesskeyid_0'] = sanitize_text_field( $input['accesskeyid_0'] );
-		}
-
-		if ( isset( $input['associationid_1'] ) ) {
-			$sanitary_values['associationid_1'] = sanitize_text_field( $input['associationid_1'] );
-		}
-
-		if ( isset( $input['secretaccesskey_2'] ) ) {
-			$sanitary_values['secretaccesskey_2'] = sanitize_text_field( $input['secretaccesskey_2'] );
-		}
-
-		if ( isset( $input['signingcertificateid_3'] ) ) {
-			$sanitary_values['signingcertificateid_3'] = sanitize_text_field( $input['signingcertificateid_3'] );
-		}
-
-		if ( isset( $input['singingcertificatexml_4'] ) ) {
-			$sanitary_values['singingcertificatexml_4'] = esc_textarea( $input['singingcertificatexml_4'] );
-		}
-
-		if ( isset( $input['portalurl_5'] ) ) {
-			$sanitary_values['portalurl_5'] = sanitize_text_field( $input['portalurl_5'] );
-		}
-
-		return $sanitary_values;
-	}
-
 	public function suitepress_sso_section_info() {
 
 	}

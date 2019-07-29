@@ -24,19 +24,11 @@ class Suitepresssso_Public {
 
 	/**
 	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string $plugin_name The ID of this plugin.
 	 */
 	private $plugin_name;
 
 	/**
 	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string $version The current version of this plugin.
 	 */
 	private $version;
 
@@ -69,26 +61,6 @@ class Suitepresssso_Public {
 		} else {
 			return $redirect_to;
 		}
-	}
-
-	// flush_rules() if our rules are not yet included
-	public function my_flush_rules() {
-		$rules = get_option( 'rewrite_rules' );
-
-		if ( ! isset( $rules['mssso/login$'] ) ) {
-			global $wp_rewrite;
-			$wp_rewrite->flush_rules();
-		}
-	}
-
-
-	public function kill_sidebar( $sidebar_output ) {
-		return '<h1>Sidebar</h1>';
-	}
-
-	public function mssso_loginform( $content ) {
-
-
 	}
 
 	public function authenticate( $user, $username, $password ) {
@@ -161,21 +133,4 @@ class Suitepresssso_Public {
 
 		return $user;
 	}
-
-	/**
-	 * Register the stylesheets for the public-facing side of the site.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_styles() {
-	}
-
-	/**
-	 * Register the JavaScript for the public-facing side of the site.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_scripts() {
-	}
-
 }
