@@ -27,7 +27,7 @@ class Suitepresssso_Admin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
+	 * @var      string $plugin_name The ID of this plugin.
 	 */
 	private $plugin_name;
 
@@ -36,7 +36,7 @@ class Suitepresssso_Admin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
+	 * @var      string $version The current version of this plugin.
 	 */
 	private $version;
 
@@ -45,14 +45,15 @@ class Suitepresssso_Admin {
 	/**
 	 * Initialize the class and set its properties.
 	 *
+	 * @param string $plugin_name The name of this plugin.
+	 * @param string $version The version of this plugin.
+	 *
 	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
+		$this->version     = $version;
 
 	}
 
@@ -62,26 +63,26 @@ class Suitepresssso_Admin {
 			'Suitepress SSO',
 			'manage_options',
 			'suitepress-sso',
-			array( $this, 'spsso_options_page')
+			array( $this, 'spsso_options_page' )
 		);
 	}
 
 	public function spsso_options_page() {
 		$this->suitepress_sso_options = get_option( 'suitepress_sso_option_name' );
 		?>
-			<div class="wrap">
-				<h2>Suitepress SSO</h2>
-				<p>MemberSuite API settings</p>
-				<?php settings_errors(); ?>
+        <div class="wrap">
+            <h2>Suitepress SSO</h2>
+            <p>MemberSuite API settings</p>
+			<?php settings_errors(); ?>
 
-				<form method="post" action="options.php">
-					<?php
-						settings_fields( 'suitepress_sso_option_group' );
-						do_settings_sections( 'suitepress-sso-admin' );
-						submit_button();
-					?>
-				</form>
-			</div>
+            <form method="post" action="options.php">
+				<?php
+				settings_fields( 'suitepress_sso_option_group' );
+				do_settings_sections( 'suitepress-sso-admin' );
+				submit_button();
+				?>
+            </form>
+        </div>
 		<?php
 	}
 
@@ -156,7 +157,7 @@ class Suitepresssso_Admin {
 		);
 	}
 
-	public function suitepress_sso_sanitize($input) {
+	public function suitepress_sso_sanitize( $input ) {
 		$sanitary_values = array();
 		if ( isset( $input['accesskeyid_0'] ) ) {
 			$sanitary_values['accesskeyid_0'] = sanitize_text_field( $input['accesskeyid_0'] );
@@ -190,34 +191,34 @@ class Suitepresssso_Admin {
 	}
 
 	public function suitepress_sso_section_info() {
-		
+
 	}
 
 	public function accesskeyid_0_callback() {
 		printf(
 			'<input class="regular-text" type="text" name="suitepress_sso_option_name[accesskeyid_0]" id="accesskeyid_0" value="%s">',
-			isset( $this->suitepress_sso_options['accesskeyid_0'] ) ? esc_attr( $this->suitepress_sso_options['accesskeyid_0']) : ''
+			isset( $this->suitepress_sso_options['accesskeyid_0'] ) ? esc_attr( $this->suitepress_sso_options['accesskeyid_0'] ) : ''
 		);
 	}
 
 	public function associationid_1_callback() {
 		printf(
 			'<input class="regular-text" type="text" name="suitepress_sso_option_name[associationid_1]" id="associationid_1" value="%s">',
-			isset( $this->suitepress_sso_options['associationid_1'] ) ? esc_attr( $this->suitepress_sso_options['associationid_1']) : ''
+			isset( $this->suitepress_sso_options['associationid_1'] ) ? esc_attr( $this->suitepress_sso_options['associationid_1'] ) : ''
 		);
 	}
 
 	public function secretaccesskey_2_callback() {
 		printf(
 			'<input class="regular-text" type="text" name="suitepress_sso_option_name[secretaccesskey_2]" id="secretaccesskey_2" value="%s">',
-			isset( $this->suitepress_sso_options['secretaccesskey_2'] ) ? esc_attr( $this->suitepress_sso_options['secretaccesskey_2']) : ''
+			isset( $this->suitepress_sso_options['secretaccesskey_2'] ) ? esc_attr( $this->suitepress_sso_options['secretaccesskey_2'] ) : ''
 		);
 	}
 
 	public function signingcertificateid_3_callback() {
 		printf(
 			'<input class="regular-text" type="text" name="suitepress_sso_option_name[signingcertificateid_3]" id="signingcertificateid_3" value="%s">',
-			isset( $this->suitepress_sso_options['signingcertificateid_3'] ) ? esc_attr( $this->suitepress_sso_options['signingcertificateid_3']) : ''
+			isset( $this->suitepress_sso_options['signingcertificateid_3'] ) ? esc_attr( $this->suitepress_sso_options['signingcertificateid_3'] ) : ''
 		);
 	}
 
@@ -231,13 +232,13 @@ class Suitepresssso_Admin {
 	public function portalurl_5_callback() {
 		printf(
 			'<input class="regular-text" type="text" name="suitepress_sso_option_name[portalurl_5]" id="portalurl_5" value="%s">',
-			isset( $this->suitepress_sso_options['portalurl_5'] ) ? esc_attr( $this->suitepress_sso_options['portalurl_5']) : ''
+			isset( $this->suitepress_sso_options['portalurl_5'] ) ? esc_attr( $this->suitepress_sso_options['portalurl_5'] ) : ''
 		);
 	}
 
 	public function wpusers_6_callback() {
 		printf(
-			'<input class="regular-text" type="checkbox" name="suitepress_sso_option_name[wpusers_6]" id="wpusers_6" %s>' . 
+			'<input class="regular-text" type="checkbox" name="suitepress_sso_option_name[wpusers_6]" id="wpusers_6" %s>' .
 			'<p>If this box is checked, the plugin will not authenticate users with their Member Suite credentials. It WILL ' .
 			'create MS portal users at SSO time. This is useful if you want WordPress to be the source of authority for user accounts.</p>' .
 			'<p>NOTE: Email address is assumed to be unique to correctly match wordpress accounts and MS portal accounts. If an email address is not found a new account will be created.</p>',

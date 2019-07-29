@@ -74,8 +74,8 @@ function define_admin_hooks() {
 
 	$plugin_admin = new Suitepresssso_Admin( $plugin_name, $plugin_version );
 
-	add_action( 'admin_menu', array($plugin_admin, 'admin_menu'));
-	add_action( 'admin_init', array($plugin_admin, 'suitepress_sso_page_init'));
+	add_action( 'admin_menu', array( $plugin_admin, 'admin_menu' ) );
+	add_action( 'admin_init', array( $plugin_admin, 'suitepress_sso_page_init' ) );
 
 }
 
@@ -92,8 +92,8 @@ function define_public_hooks() {
 
 	$plugin_public = new Suitepresssso_Public( $plugin_name, $plugin_version );
 
-	add_filter( 'authenticate', array($plugin_public, 'authenticate'), 10, 3 );
-	add_filter( 'login_redirect', array($plugin_public, 'login_redirect'), 10, 3 );
+	add_filter( 'authenticate', array( $plugin_public, 'authenticate' ), 10, 3 );
+	add_filter( 'login_redirect', array( $plugin_public, 'login_redirect' ), 10, 3 );
 
 }
 
