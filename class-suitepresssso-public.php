@@ -47,7 +47,7 @@ class Suitepresssso_Public {
 
 	}
 
-	function login_redirect( $redirect_to, $request, $user ) {
+	public function login_redirect( $redirect_to, $request, $user ) {
 
 		//is there a user to check?
 		if ( isset( $user->roles ) && is_array( $user->roles ) ) {
@@ -63,7 +63,7 @@ class Suitepresssso_Public {
 		}
 	}
 
-	function filter_members_pages() {
+	public function filter_members_pages() {
 		if (is_user_logged_in()) {
 			return; // User is logged in and can view any page
 		} else if (is_page() && get_post_meta(get_the_ID(), '_iagcms_members', true) == "yes") {
@@ -73,6 +73,12 @@ class Suitepresssso_Public {
 			status_header(404);
 	 	} else {
 			return; // Not a page or not members only, pass through
+		}
+	}
+
+	public function remove_admin_bar() {
+		if (!current_user_can('administrator') && !is_admin()) {
+			show_admin_bar(false);
 		}
 	}
 
