@@ -73,7 +73,7 @@
  *
  */
 
-require_once('RSA.php');
+require_once( 'RSA.php' );
 
 class Crypt_RSA_XML extends Crypt_RSA {
 

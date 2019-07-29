@@ -5,7 +5,7 @@
   //include_once($_SERVER['DOCUMENT_ROOT'].'/ms_sdk/APISample/phpsdk.phar'); // Use PHAR Archive
   include_once($_SERVER['DOCUMENT_ROOT'].'/ms_sdk/src/MemberSuite.php'); // Use the SRC Directory
 
-include_once('./ConciergeApiHelper.php');
+include_once( './ConciergeApiHelper.php' );
 
 include_once('./config.php');
 

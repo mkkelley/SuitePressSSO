@@ -30,46 +30,72 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+$plugin_name    = "SuitePressSSO";
+$plugin_version = "2.0.0";
+
 /**
  * The code that runs during plugin activation.
- * This action is documented in includes/class-suitepresssso-activator.php
  */
 function activate_suitepresssso() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-suitepresssso-activator.php';
-	Suitepresssso_Activator::activate();
+	$rules = get_option( 'rewrite_rules' );
+
+	if ( ! isset( $rules['mssso/login$'] ) ) {
+		global $wp_rewrite;
+		$wp_rewrite->flush_rules();
+	}
 }
 
 /**
  * The code that runs during plugin deactivation.
- * This action is documented in includes/class-suitepresssso-deactivator.php
  */
 function deactivate_suitepresssso() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-suitepresssso-deactivator.php';
-	Suitepresssso_Deactivator::deactivate();
+	// Do nothing
 }
 
 register_activation_hook( __FILE__, 'activate_suitepresssso' );
 register_deactivation_hook( __FILE__, 'deactivate_suitepresssso' );
 
-/**
- * The core plugin class that is used to define internationalization,
- * admin-specific hooks, and public-facing site hooks.
- */
-require plugin_dir_path( __FILE__ ) . 'includes/class-suitepresssso.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/ms-sdk/MemberSuite.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/ms-sso/ConciergeApiHelper.php';
+require_once plugin_dir_path( __FILE__ ) . 'class-userconfig.php';
+require_once plugin_dir_path( __FILE__ ) . 'class-suitepresssso-admin.php';
+require_once plugin_dir_path( __FILE__ ) . 'class-suitepresssso-public.php';
 
 /**
- * Begins execution of the plugin.
- *
- * Since everything within the plugin is registered via hooks,
- * then kicking off the plugin from this point in the file does
- * not affect the page life cycle.
+ * Register all of the hooks related to the admin area functionality
+ * of the plugin.
  *
  * @since    1.0.0
+ * @access   private
  */
-function run_suitepresssso() {
+function define_admin_hooks() {
+	global $plugin_name;
+	global $plugin_version;
 
-	$plugin = new Suitepresssso();
-	$plugin->run();
+	$plugin_admin = new Suitepresssso_Admin( $plugin_name, $plugin_version );
+
+	add_action( 'admin_menu', array($plugin_admin, 'admin_menu'));
+	add_action( 'admin_init', array($plugin_admin, 'suitepress_sso_page_init'));
 
 }
-run_suitepresssso();
+
+/**
+ * Register all of the hooks related to the public-facing functionality
+ * of the plugin.
+ *
+ * @since    1.0.0
+ * @access   private
+ */
+function define_public_hooks() {
+	global $plugin_name;
+	global $plugin_version;
+
+	$plugin_public = new Suitepresssso_Public( $plugin_name, $plugin_version );
+
+	add_filter( 'authenticate', array($plugin_public, 'authenticate'), 10, 3 );
+	add_filter( 'login_redirect', array($plugin_public, 'login_redirect'), 10, 3 );
+
+}
+
+define_admin_hooks();
+define_public_hooks();
