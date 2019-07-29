@@ -51,10 +51,41 @@ class Suitepresssso_Admin {
 	 * @since    1.0.0
 	 */
 	public function __construct( $plugin_name, $version ) {
-
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
+	}
 
+	/**
+	 * Add yes/no selector on the page edit screen
+	 */
+	public function add_members_only_selector() {
+		add_meta_box( 'iagcms_meta_box', 'Member Selector', [ self::class, 'meta_html' ], 'page' );
+	}
+
+	/**
+	 * Add the form field on the page edit screen
+	 *
+	 * @param $post
+	 */
+	public static function meta_html( $post ) {
+		$value = get_post_meta( $post->ID, '_iagcms_members', true );
+		?>
+        <label for="iagcms_members">Members Only</label>
+        <select name="iagcms_members" id="iagcms_members">
+            <option value="yes" <?php selected( $value, 'yes' ) ?>>Yes</option>
+            <option value="no" <?php selected( $value, 'no' ) ?>>No</option>
+        </select>
+		<?php
+	}
+
+	public function save_members_only_information( $post_id ) {
+		if ( array_key_exists( 'iagcms_members', $_POST ) ) {
+			update_post_meta(
+				$post_id,
+				'_iagcms_members',
+				$_POST['iagcms_members']
+			);
+		}
 	}
 
 	public function admin_menu() {

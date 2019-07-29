@@ -63,6 +63,19 @@ class Suitepresssso_Public {
 		}
 	}
 
+	function filter_members_pages() {
+		if (is_user_logged_in()) {
+			return; // User is logged in and can view any page
+		} else if (is_page() && get_post_meta(get_the_ID(), '_iagcms_members', true) == "yes") {
+			global $wp_query;
+			$wp_query->set_404();
+			nocache_headers();
+			status_header(404);
+	 	} else {
+			return; // Not a page or not members only, pass through
+		}
+	}
+
 	public function authenticate( $user, $username, $password ) {
 		// Make sure a username and password are present for us to work with
 		if ( $username == '' || $password == '' ) {

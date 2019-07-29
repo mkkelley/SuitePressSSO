@@ -77,6 +77,8 @@ function define_admin_hooks() {
 	add_action( 'admin_menu', array( $plugin_admin, 'admin_menu' ) );
 	add_action( 'admin_init', array( $plugin_admin, 'suitepress_sso_page_init' ) );
 
+	add_action( 'add_meta_boxes', array( $plugin_admin, 'add_members_only_selector' ) );
+	add_action( 'save_post', array( $plugin_admin, 'save_members_only_information' ) );
 }
 
 /**
@@ -95,6 +97,7 @@ function define_public_hooks() {
 	add_filter( 'authenticate', array( $plugin_public, 'authenticate' ), 10, 3 );
 	add_filter( 'login_redirect', array( $plugin_public, 'login_redirect' ), 10, 3 );
 
+	add_action( 'wp', array( $plugin_public, 'filter_members_pages' ) );
 }
 
 define_admin_hooks();
