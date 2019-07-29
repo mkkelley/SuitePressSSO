@@ -147,14 +147,6 @@ class Suitepresssso_Admin {
 			'suitepress-sso-admin', // page
 			'suitepress_sso_setting_section' // section
 		);
-
-		add_settings_field(
-			'wpusers_6', // id
-			'WPUsers', // title
-			array( $this, 'wpusers_6_callback' ), // callback
-			'suitepress-sso-admin', // page
-			'suitepress_sso_setting_section' // section
-		);
 	}
 
 	public function suitepress_sso_sanitize( $input ) {
@@ -181,10 +173,6 @@ class Suitepresssso_Admin {
 
 		if ( isset( $input['portalurl_5'] ) ) {
 			$sanitary_values['portalurl_5'] = sanitize_text_field( $input['portalurl_5'] );
-		}
-
-		if ( isset( $input['wpusers_6'] ) ) {
-			$sanitary_values['wpusers_6'] = sanitize_text_field( $input['wpusers_6'] );
 		}
 
 		return $sanitary_values;
@@ -235,33 +223,6 @@ class Suitepresssso_Admin {
 			isset( $this->suitepress_sso_options['portalurl_5'] ) ? esc_attr( $this->suitepress_sso_options['portalurl_5'] ) : ''
 		);
 	}
-
-	public function wpusers_6_callback() {
-		printf(
-			'<input class="regular-text" type="checkbox" name="suitepress_sso_option_name[wpusers_6]" id="wpusers_6" %s>' .
-			'<p>If this box is checked, the plugin will not authenticate users with their Member Suite credentials. It WILL ' .
-			'create MS portal users at SSO time. This is useful if you want WordPress to be the source of authority for user accounts.</p>' .
-			'<p>NOTE: Email address is assumed to be unique to correctly match wordpress accounts and MS portal accounts. If an email address is not found a new account will be created.</p>',
-			isset( $this->suitepress_sso_options['wpusers_6'] ) ? 'checked' : ''
-		);
-	}
-
-	/**
-	 * Register the stylesheets for the admin area.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_styles() {
-	}
-
-	/**
-	 * Register the JavaScript for the admin area.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_scripts() {
-	}
-
 }
 
 /* 
@@ -273,5 +234,4 @@ class Suitepresssso_Admin {
  * $signingcertificateid_3 = $suitepress_sso_options['signingcertificateid_3']; // SigningcertificateId
  * $singingcertificatexml_4 = $suitepress_sso_options['singingcertificatexml_4']; // singingcertificatexml
  * $portalurl_5 = $suitepress_sso_options['portalurl_5']; // PortalUrl
- * $wpusers_6 = $suitepress_sso_options['portalurl_5']; // WPUsers
  */
