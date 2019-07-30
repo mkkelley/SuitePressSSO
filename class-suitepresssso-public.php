@@ -48,12 +48,13 @@ class Suitepresssso_Public {
 	}
 
 	public function login_redirect( $redirect_to, $request, $user ) {
-
 		//is there a user to check?
 		if ( isset( $user->roles ) && is_array( $user->roles ) ) {
 			//check for admins
 			if ( in_array( 'administrator', $user->roles ) ) {
 				// redirect them to the default place
+				return $redirect_to;
+			} else if ($redirect_to != null && $redirect_to != admin_url()) {
 				return $redirect_to;
 			} else {
 				return home_url();
@@ -67,10 +68,8 @@ class Suitepresssso_Public {
 		if (is_user_logged_in()) {
 			return; // User is logged in and can view any page
 		} else if (is_page() && get_post_meta(get_the_ID(), '_iagcms_members', true) == "yes") {
-			global $wp_query;
-			$wp_query->set_404();
-			nocache_headers();
-			status_header(404);
+			wp_redirect('/wp-login.php?redirect_to=' . get_permalink(get_the_ID()));
+			exit;
 	 	} else {
 			return; // Not a page or not members only, pass through
 		}
