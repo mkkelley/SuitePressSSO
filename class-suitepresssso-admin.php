@@ -72,8 +72,8 @@ class Suitepresssso_Admin {
 		?>
         <label for="iagcms_members">Members Only</label>
         <select name="iagcms_members" id="iagcms_members">
-            <option value="yes" <?php selected( $value, 'yes' ) ?>>Yes</option>
             <option value="no" <?php selected( $value, 'no' ) ?>>No</option>
+            <option value="yes" <?php selected( $value, 'yes' ) ?>>Yes</option>
         </select>
 		<?php
 	}

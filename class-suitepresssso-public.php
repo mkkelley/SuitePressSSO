@@ -68,7 +68,7 @@ class Suitepresssso_Public {
 		if (is_user_logged_in()) {
 			return; // User is logged in and can view any page
 		} else if (is_page() && get_post_meta(get_the_ID(), '_iagcms_members', true) == "yes") {
-			wp_redirect('/wp-login.php?redirect_to=' . get_permalink(get_the_ID()));
+			wp_redirect(wp_login_url(get_permalink(get_the_ID())));
 			exit;
 	 	} else {
 			return; // Not a page or not members only, pass through
