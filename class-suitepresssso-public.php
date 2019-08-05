@@ -54,7 +54,7 @@ class Suitepresssso_Public {
 			if ( in_array( 'administrator', $user->roles ) ) {
 				// redirect them to the default place
 				return $redirect_to;
-			} else if ($redirect_to != null && $redirect_to != admin_url()) {
+			} else if ( $redirect_to != null && $redirect_to != admin_url() ) {
 				return $redirect_to;
 			} else {
 				return home_url();
@@ -65,20 +65,31 @@ class Suitepresssso_Public {
 	}
 
 	public function filter_members_pages() {
-		if (is_user_logged_in()) {
+		if ( is_user_logged_in() ) {
 			return; // User is logged in and can view any page
-		} else if (is_page() && get_post_meta(get_the_ID(), '_iagcms_members', true) == "yes") {
-			wp_redirect(wp_login_url(get_permalink(get_the_ID())));
+		} else if ( is_page() && get_post_meta( get_the_ID(), '_iagcms_members', true ) == "yes" ) {
+			wp_redirect( wp_login_url( get_permalink( get_the_ID() ) ) );
 			exit;
-	 	} else {
+		} else {
 			return; // Not a page or not members only, pass through
 		}
 	}
 
 	public function remove_admin_bar() {
-		if (!current_user_can('administrator') && !is_admin()) {
-			show_admin_bar(false);
+		if ( ! current_user_can( 'administrator' ) && ! is_admin() ) {
+			show_admin_bar( false );
 		}
+	}
+
+	private function membersuite_api_login() {
+		$api = new MemberSuite();
+
+		$api->accesskeyId          = Userconfig::read( 'AccessKeyId' );
+		$api->associationId        = Userconfig::read( 'AssociationId' );
+		$api->secretaccessId       = Userconfig::read( 'SecretAccessKey' );
+		$api->signingcertificateId = Userconfig::read( 'SigningcertificateId' );
+
+		return $api;
 	}
 
 	public function authenticate( $user, $username, $password ) {
@@ -91,25 +102,15 @@ class Suitepresssso_Public {
 			return $user;
 		}
 
-
-		// Verrify credentials
-		$api = new MemberSuite();
+		$api = $this->membersuite_api_login();
 
 		if ( is_null( $api ) ) {
 			return $user;
 		}
+		$api->portalusername = $username;
+		$api->portalPassword = $password;
 
-		$helper                    = new ConciergeApiHelper();
-		$api->accesskeyId          = Userconfig::read( 'AccessKeyId' );
-		$api->associationId        = Userconfig::read( 'AssociationId' );
-		$api->secretaccessId       = Userconfig::read( 'SecretAccessKey' );
-		$api->portalusername       = $username;
-		$api->portalPassword       = $password;
-		$api->signingcertificateId = Userconfig::read( 'SigningcertificateId' );
-
-		$user = new WP_Error( 'denied', __( "ERROR: Username or password was invalid." ) );
-
-		// Varify username and password
+		// Verify username and password
 		$response = $api->LoginToPortal( $api->portalusername, $api->portalPassword );
 
 		if ( $response->aSuccess == 'false' ) {
@@ -126,29 +127,50 @@ class Suitepresssso_Public {
 
 			if ( $user->ID == 0 ) {
 				// The user does not currently exist in the WordPress user table.
-				// You have arrived at a fork in the road, choose your destiny wisely
-
-				// If you do not want to add new users to WordPress if they do not
-				// already exist uncomment the following line and remove the user creation code
-				//$user = new WP_Error( 'denied', __("ERROR: Not a valid user for this system") );
-
-				// Setup the minimum required user information for this example
 				$userdata    = array(
 					'user_email' => $msUser->EmailAddress,
 					'user_login' => $username,
+					'user_pass'  => $password,
 					'first_name' => $msUser->FirstName,
 					'last_name'  => $msUser->LastName
 				);
 				$new_user_id = wp_insert_user( $userdata ); // A new user has been created
+
+				$portal_user_guid = $this->get_ms_portal_user_id_by_indiv_id( $api, $msUser->ID );
+
+				add_user_meta(
+					$new_user_id,
+					'iagcms_ms_uid',
+					$portal_user_guid
+				);
 
 				// Load the new user info
 				$user = new WP_User ( $new_user_id );
 			}
 		}
 
-		// Uncomment to disable local authentication.
-		//remove_action('authenticate', 'wp_authenticate_username_password', 20);
-
 		return $user;
 	}
+
+	private function get_ms_portal_user_id_by_indiv_id( $api, $indiv_id ) {
+		$query    = "select ID, Owner from PortalUser where Owner='$indiv_id'";
+		$response = $api->ExecuteMSQL( $query, "0", "" );
+		$result   = $response->aResultValue->aSearchResult->aTable->diffgrdiffgram->NewDataSet;
+
+		return $result->Table->ID;
+	}
+
+	public function reset_ms_password( $user, $new_pass ) {
+		$api = $this->membersuite_api_login();
+		if ( $api == null ) {
+			return;
+		} else {
+			$ms_uid = get_user_meta( $user->ID, 'iagcms_ms_uid', true );
+			if ( $ms_uid == "" ) {
+				return;
+			}
+			$result = $api->ResetPassword( $ms_uid, $new_pass );
+		}
+	}
+
 }

@@ -97,6 +97,7 @@ function define_public_hooks() {
 	add_filter( 'authenticate', array( $plugin_public, 'authenticate' ), 10, 3 );
 	add_filter( 'login_redirect', array( $plugin_public, 'login_redirect' ), 10, 3 );
 
+	add_action( 'password_reset', array( $plugin_public, 'reset_ms_password' ), 10, 2 );
 	add_action( 'after_setup_theme', array( $plugin_public, 'remove_admin_bar' ) );
 	add_action( 'wp', array( $plugin_public, 'filter_members_pages' ) );
 }
